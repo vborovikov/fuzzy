@@ -1,0 +1,34 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <VersionPrefix>0.1.0</VersionPrefix>
+    <VersionSuffix>beta</VersionSuffix>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <PackageId>FuzzyCompare</PackageId>
+    <PackageVersion>$(Version)</PackageVersion>
+    <Authors>Vladislav Borovikov</Authors>
+    <Title>FuzzyCompare</Title>
+    <Description>Fuzzy string comparison library</Description>
+    <Copyright>Copyright © 2023 Vladislav Borovikov</Copyright>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageProjectUrl>https://github.com/vborovikov/fuzzy</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/vborovikov/fuzzy.git</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>string;compare;fuzzy</PackageTags>
+    <PackageReleaseNotes></PackageReleaseNotes>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+</Project>
