@@ -1,4 +1,4 @@
-﻿namespace FuzzyCompare;
+namespace FuzzyCompare;
 
 using System;
 using System.Collections.Generic;
@@ -53,6 +53,11 @@ public sealed class FuzzyStringComparer : IEqualityComparer<string>
     }
 
     public int GetHashCode([DisallowNull] string obj)
+    {
+        return GetHashCode((ReadOnlySpan<char>)obj);
+    }
+
+    public int GetHashCode(ReadOnlySpan<char> obj)
     {
         var hashCode = new HashCode();
 
