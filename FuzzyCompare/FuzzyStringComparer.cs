@@ -59,14 +59,7 @@ public sealed class FuzzyStringComparer : IEqualityComparer<string>
 
     public int GetHashCode(ReadOnlySpan<char> obj)
     {
-        var hashCode = new HashCode();
-
         var length = Math.Min(obj.Length, 4);
-        for (var i = 0; i != length; ++i)
-        {
-            hashCode.Add(char.ToUpper(obj[i], this.Culture));
-        }
-
-        return hashCode.ToHashCode();
+        return this.Culture.CompareInfo.GetHashCode(obj[..length], CompareOptions.IgnoreCase);
     }
 }

@@ -6,6 +6,8 @@ namespace FuzzyCompare.Text
     [DebuggerDisplay("{Category}: {ToString()}")]
     public readonly struct Token : IEquatable<Token>, IEquatable<string>, IEquatable<char>
     {
+        private const StringComparison comparison = StringComparison.OrdinalIgnoreCase;
+
         private readonly ReadOnlyMemory<char> source;
         private readonly Range range;
 
@@ -39,7 +41,7 @@ namespace FuzzyCompare.Text
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(this.source, this.range, this.Category);
+            return HashCode.Combine(String.GetHashCode(this.source[this.range].Span, comparison), this.Category);
         }
 
         public override bool Equals(object obj)
@@ -74,12 +76,12 @@ namespace FuzzyCompare.Text
             if (this.Length != 1)
                 return false;
 
-            return Char.ToUpperInvariant(this.source.Span[this.range.Start]).Equals(Char.ToUpperInvariant(other));
+            return Char.ToUpperInvariant(this.source[this.range].Span[0]).Equals(Char.ToUpperInvariant(other));
         }
 
         private bool EqualsSpan(ReadOnlySpan<char> span)
         {
-            return this.Span.Equals(span, StringComparison.OrdinalIgnoreCase);
+            return this.Span.Equals(span, comparison);
         }
     }
 }

@@ -8,9 +8,9 @@ using Scanners;
 
 public static class Tokenizer
 {
-    public readonly ref struct TokenSpan
+    public readonly ref struct TokenRef
     {
-        public TokenSpan(ReadOnlySpan<char> span, TokenCategory category)
+        public TokenRef(ReadOnlySpan<char> span, TokenCategory category)
         {
             this.Span = span;
             this.Category = category;
@@ -25,24 +25,24 @@ public static class Tokenizer
             category = this.Category;
         }
 
-        public static implicit operator ReadOnlySpan<char>(TokenSpan token) => token.Span;
+        public static implicit operator ReadOnlySpan<char>(TokenRef token) => token.Span;
     }
 
-    public ref struct TokenSpanEnumerator
+    public ref struct TokenRefEnumerator
     {
         private ReadOnlySpan<char> span;
         private readonly CultureInfo culture;
 
-        internal TokenSpanEnumerator(ReadOnlySpan<char> span, CultureInfo culture)
+        internal TokenRefEnumerator(ReadOnlySpan<char> span, CultureInfo culture)
         {
             this.span = span;
             this.culture = culture;
             this.Current = default;
         }
 
-        public TokenSpan Current { get; private set; }
+        public TokenRef Current { get; private set; }
 
-        public TokenSpanEnumerator GetEnumerator() => this;
+        public TokenRefEnumerator GetEnumerator() => this;
 
         public bool MoveNext()
         {
@@ -55,7 +55,7 @@ public static class Tokenizer
                 if (tokenEndIndex < 0)
                     tokenEndIndex = text.Length;
 
-                this.Current = new TokenSpan(text.Slice(0, tokenEndIndex), tokenCategory);
+                this.Current = new TokenRef(text.Slice(0, tokenEndIndex), tokenCategory);
                 this.span = text.Slice(tokenEndIndex);
                 return true;
             }
@@ -127,7 +127,7 @@ public static class Tokenizer
     private static readonly OtherScanner other;
 #pragma warning restore CS0649
 
-    public static TokenSpanEnumerator Tokenize(this ReadOnlySpan<char> span, CultureInfo? culture = null)
+    public static TokenRefEnumerator Tokenize(this ReadOnlySpan<char> span, CultureInfo? culture = null)
     {
         return new(span, culture ?? CultureInfo.CurrentCulture);
     }
