@@ -40,7 +40,7 @@ public static class ComparisonMethods
         };
 
         var jaroSimilarity = source.JaroSimilarity(target);
-        var commonPrefixLength = source[..4].CommonPrefixLength(target[..4]);
+        var commonPrefixLength = source[..Math.Min(4, source.Length)].CommonPrefixLength(target[..Math.Min(4, target.Length)]);
 
         return jaroSimilarity + (commonPrefixLength * prefixScale * (1 - jaroSimilarity));
     }

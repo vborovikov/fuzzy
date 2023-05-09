@@ -37,4 +37,11 @@ public class JaroWinklerSimilarityTests
         var similarity = ComparisonMethods.JaroWinklerSimilarity("My string", "My ntrisg");
         Assert.AreEqual(0.896296f, MathF.Round(similarity, 6, MidpointRounding.AwayFromZero));
     }
+
+    [TestMethod]
+    public void JaroWinklerSimilarity_Short()
+    {
+        var similarity = ComparisonMethods.JaroWinklerSimilarity("abc", "abcc");
+        Assert.AreEqual(0.941667f, MathF.Round(similarity, 6, MidpointRounding.AwayFromZero));
+    }
 }
