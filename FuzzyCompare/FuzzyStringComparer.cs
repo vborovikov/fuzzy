@@ -24,9 +24,9 @@ public sealed class FuzzyStringComparer : IStringEqualityComparer
 
     public FuzzyStringComparer() : this(0.80f, CultureInfo.CurrentCulture) { }
 
-    private FuzzyStringComparer(float tolerance) : this(tolerance, CultureInfo.CurrentCulture) { }
+    public FuzzyStringComparer(float tolerance) : this(tolerance, CultureInfo.CurrentCulture) { }
 
-    private FuzzyStringComparer(float tolerance, CultureInfo culture)
+    public FuzzyStringComparer(float tolerance, CultureInfo culture)
     {
         this.Tolerance = tolerance;
         this.Culture = culture;
