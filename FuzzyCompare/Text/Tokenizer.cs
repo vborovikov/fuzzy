@@ -3,7 +3,6 @@
 using System;
 using System.Collections;
 using System.Globalization;
-using System.Text;
 using Scanners;
 
 public static class Tokenizer
@@ -165,7 +164,7 @@ public static class Tokenizer
             TokenCategory.OtherNumber => otherNumber.Scan(span, start, culture),
             TokenCategory.PunctuationMark => punctuationMark.Scan(span, start, culture),
             TokenCategory.Symbol => symbol.Scan(span, start, culture),
-            _ => throw new NotImplementedException()
+            _ => throw new NotSupportedException()
         };
     }
 }

@@ -5,7 +5,13 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 
-public sealed class FuzzyStringComparer : IEqualityComparer<string>
+public interface IStringEqualityComparer : IEqualityComparer<string>
+{
+    bool Equals(ReadOnlySpan<char> x, ReadOnlySpan<char> y);
+    int GetHashCode(ReadOnlySpan<char> obj);
+}
+
+public sealed class FuzzyStringComparer : IStringEqualityComparer
 {
     public static readonly FuzzyStringComparer Normal = new(0.80f);
     public static readonly FuzzyStringComparer AboveNormal = new(0.85f);
