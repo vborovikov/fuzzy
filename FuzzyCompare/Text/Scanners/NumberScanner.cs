@@ -14,7 +14,9 @@ namespace FuzzyCompare.Text.Scanners
 
 		public int Scan(ReadOnlySpan<char> span, int start, CultureInfo culture)
 		{
-			for (var i = start; i != span.Length; ++i)
+            //todo: detect integers, floating-point numbers (all notations), hex numbers
+
+            for (var i = start; i != span.Length; ++i)
 			{
 				if (Test(span, i, culture) == false)
 				{
