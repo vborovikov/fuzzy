@@ -1,4 +1,5 @@
 ﻿namespace FuzzyCompareTests;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 [TestClass]
 public class TokenTests
@@ -53,5 +54,41 @@ public class TokenTests
         var token = "hello world".EnumerateTokens().First();
 
         EqualityTests.TestUnequalObjects(token, default);
+    }
+
+    [TestMethod]
+    public void Tokenize_NumberMinusSign_PartOfNumber()
+    {
+        var token = "sample -1".EnumerateTokens().Last();
+
+        Assert.AreEqual(TokenCategory.Number, token.Category);
+        Assert.AreEqual("-1", token.ToString());
+    }
+
+    [TestMethod]
+    public void Tokenize_HexNumber_NumberCategory()
+    {
+        var token = "sample 0xDeadBeef".EnumerateTokens().Last();
+
+        Assert.AreEqual(TokenCategory.Number, token.Category);
+        Assert.AreEqual("0xDeadBeef", token.ToString());
+    }
+
+    [TestMethod]
+    public void Tokenize_MinusHexNumber_MinusOmitted()
+    {
+        var token = "sample -0xDeadBeef".EnumerateTokens().Last();
+
+        Assert.AreEqual(TokenCategory.Number, token.Category);
+        Assert.AreEqual("0xDeadBeef", token.ToString());
+    }
+
+    [TestMethod]
+    public void Tokenize_MinusOctetNumber_MinusIncluded()
+    {
+        var token = "sample -015".EnumerateTokens().Last();
+
+        Assert.AreEqual(TokenCategory.Number, token.Category);
+        Assert.AreEqual("-015", token.ToString());
     }
 }
