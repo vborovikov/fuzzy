@@ -6,8 +6,17 @@ using System.Runtime.CompilerServices;
 using System.Runtime.Intrinsics.X86;
 using System.Runtime.Intrinsics;
 
+/// <summary>
+/// A static class that provides methods for comparing strings using fuzzy logic.
+/// </summary>
 public static class ComparisonMethods
 {
+    /// <summary>
+    /// Calculates the Jaro similarity between two given strings using a fuzzy matching algorithm.
+    /// </summary>
+    /// <param name="source">The source string.</param>
+    /// <param name="target">The target string.</param>
+    /// <returns>A float value between 0 and 1 representing the similarity between the two inputs.</returns>
     public static float JaroSimilarity(this ReadOnlySpan<char> source, ReadOnlySpan<char> target)
     {
         var sourceIntersectTarget = source.CommonChars(target);
@@ -30,6 +39,13 @@ public static class ComparisonMethods
         return ((m / source.Length) + (m / target.Length) + ((m - t) / m)) / 3f;
     }
 
+    /// <summary>
+    /// Calculates the Jaro-Winkler similarity between two given strings using a fuzzy matching algorithm.
+    /// </summary>
+    /// <param name="source">The source string.</param>
+    /// <param name="target">The target string.</param>
+    /// <param name="p">A scaling factor for the weight of the common prefix. Defaults to 0.1.</param>
+    /// <returns>A float value between 0 and 1 representing the similarity between the two inputs.</returns>
     public static float JaroWinklerSimilarity(this ReadOnlySpan<char> source, ReadOnlySpan<char> target, float p = 0.1f)
     {
         var prefixScale = p switch
@@ -45,6 +61,12 @@ public static class ComparisonMethods
         return jaroSimilarity + (commonPrefixLength * prefixScale * (1 - jaroSimilarity));
     }
 
+    /// <summary>
+    /// Calculates the Levenshtein distance between two given strings using a fuzzy matching algorithm.
+    /// </summary>
+    /// <param name="source">The source string.</param>
+    /// <param name="target">The target string.</param>
+    /// <returns>An integer representing the edit distance between the two inputs.</returns>
     public static unsafe int LevenshteinDistance(this ReadOnlySpan<char> source, ReadOnlySpan<char> target)
     {
         var startIndex = 0;
@@ -267,6 +289,12 @@ public static class ComparisonMethods
         }
     }
 
+    /// <summary>
+    /// Finds the common characters between two given strings.
+    /// </summary>
+    /// <param name="source">The source string.</param>
+    /// <param name="target">The target string.</param>
+    /// <returns>A ReadOnlySpan containing the common characters between the two inputs.</returns>
     private static ReadOnlySpan<char> CommonChars(this ReadOnlySpan<char> source, ReadOnlySpan<char> target)
     {
         if (source.IsEmpty || target.IsEmpty)

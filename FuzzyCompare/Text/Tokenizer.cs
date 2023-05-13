@@ -5,28 +5,57 @@ using System.Collections;
 using System.Globalization;
 using Scanners;
 
+/// <summary>
+/// Provides methods for tokenizing a string or span of characters.
+/// </summary>
 public static class Tokenizer
 {
+    /// <summary>
+    /// Represents a reference to a token that was generated during tokenization.
+    /// </summary>
     public readonly ref struct TokenRef
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TokenRef"/> structure with the specified span and category.
+        /// </summary>
+        /// <param name="span">The span of characters that the token represents.</param>
+        /// <param name="category">The category of the token.</param>
         public TokenRef(ReadOnlySpan<char> span, TokenCategory category)
         {
             this.Span = span;
             this.Category = category;
         }
 
+        /// <summary>
+        /// Gets the span of characters that the token represents.
+        /// </summary>
         public ReadOnlySpan<char> Span { get; }
+        /// <summary>
+        /// Gets the category of the token.
+        /// </summary>
         public TokenCategory Category { get; }
 
+        /// <summary>
+        /// Deconstructs the <see cref="TokenRef"/> instance into its constituent parts.
+        /// </summary>
+        /// <param name="span">The span of characters that the token represents.</param>
+        /// <param name="category">The category of the token.</param>
         public void Deconstruct(out ReadOnlySpan<char> span, out TokenCategory category)
         {
             span = this.Span;
             category = this.Category;
         }
 
+        /// <summary>
+        /// Implicitly converts a <see cref="TokenRef"/> to a <see cref="ReadOnlySpan{T}"/> of <see cref="char"/>.
+        /// </summary>
+        /// <param name="token">The token to convert.</param>
         public static implicit operator ReadOnlySpan<char>(TokenRef token) => token.Span;
     }
 
+    /// <summary>
+    /// Provides an enumerator for iterating over token references in a span of characters.
+    /// </summary>
     public ref struct TokenRefEnumerator
     {
         private ReadOnlySpan<char> span;
@@ -39,10 +68,20 @@ public static class Tokenizer
             this.Current = default;
         }
 
+        /// <summary>
+        /// Gets the current token reference.
+        /// </summary>
         public TokenRef Current { get; private set; }
 
+        /// <summary>
+        /// Returns the current instance of the <see cref="TokenRefEnumerator"/> object.
+        /// </summary>
+        /// <returns>The current instance of the <see cref="TokenRefEnumerator"/> object.</returns>
         public TokenRefEnumerator GetEnumerator() => this;
 
+        /// <summary>
+        /// Advances the enumerator to the next token reference in the span.
+        /// </summary>
         public bool MoveNext()
         {
             var text = this.span;
@@ -63,6 +102,9 @@ public static class Tokenizer
         }
     }
 
+    /// <summary>
+    /// Provides an enumerator for iterating over tokens in a string.
+    /// </summary>
     public struct TokenEnumerator : IEnumerable<Token>, IEnumerator<Token>
     {
         private readonly ReadOnlyMemory<char> text;
@@ -76,10 +118,20 @@ public static class Tokenizer
             this.culture = culture;
         }
 
+        /// <summary>
+        /// Gets the current token.
+        /// </summary>
         public Token Current => this.current;
 
+        /// <summary>
+        /// Returns the current instance of the <see cref="TokenEnumerator"/> object.
+        /// </summary>
+        /// <returns>The current instance of the <see cref="TokenEnumerator"/> object.</returns>
         public TokenEnumerator GetEnumerator() => this;
 
+        /// <summary>
+        /// Advances the enumerator to the next token in the string.
+        /// </summary>
         public bool MoveNext()
         {
             if (this.start >= this.text.Length)
@@ -126,12 +178,24 @@ public static class Tokenizer
     private static readonly OtherScanner other;
 #pragma warning restore CS0649
 
-    public static TokenRefEnumerator Tokenize(this ReadOnlySpan<char> span, CultureInfo? culture = null)
+    /// <summary>
+    /// Tokenizes a span of characters and returns an enumerator for iterating over token references.
+    /// </summary>
+    /// <param name="span">The span of characters to tokenize.</param>
+    /// <param name="culture">The culture to use for string comparison.</param>
+    /// <returns>An enumerator for iterating over token references.</returns>
+    public static TokenRefEnumerator EnumerateTokens(this ReadOnlySpan<char> span, CultureInfo? culture = null)
     {
         return new(span, culture ?? CultureInfo.CurrentCulture);
     }
 
-    public static TokenEnumerator EnumerateTokens(this string str, CultureInfo? culture = null)
+    /// <summary>
+    /// Tokenizes a string and returns an enumerator for iterating over tokens.
+    /// </summary>
+    /// <param name="str">The string to tokenize.</param>
+    /// <param name="culture">The culture to use for string comparison.</param>
+    /// <returns>An enumerator for iterating over tokens.</returns>
+    public static TokenEnumerator Tokenize(this string str, CultureInfo? culture = null)
     {
         return new(str.AsMemory(), culture ?? CultureInfo.CurrentCulture);
     }
