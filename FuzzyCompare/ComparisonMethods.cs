@@ -67,6 +67,7 @@ public static class ComparisonMethods
     /// <param name="source">The source string.</param>
     /// <param name="target">The target string.</param>
     /// <returns>An integer representing the edit distance between the two inputs.</returns>
+    /// <remarks>Copyright by James Turner - https://github.com/Turnerj/LevenshteinBenchmarks</remarks>
     public static unsafe int LevenshteinDistance(this ReadOnlySpan<char> source, ReadOnlySpan<char> target)
     {
         var startIndex = 0;
