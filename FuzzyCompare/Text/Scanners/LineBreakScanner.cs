@@ -5,7 +5,7 @@ using System.Globalization;
 
 readonly struct LineBreakScanner : ITokenScanner
 {
-    public TokenCategory Category { get; }
+    public TokenCategory Category => TokenCategory.LineBreak;
 
     public bool Test(ReadOnlySpan<char> span, int start, CultureInfo culture)
     {

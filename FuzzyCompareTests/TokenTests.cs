@@ -91,4 +91,12 @@ public class TokenTests
         Assert.AreEqual(TokenCategory.Number, token.Category);
         Assert.AreEqual("-015", token.ToString());
     }
+
+    [TestMethod]
+    public void Tokenize_LineBreak_Recognized()
+    {
+        var token = "sample\r\ntext".Tokenize().SingleOrDefault(tk => tk.Category == TokenCategory.LineBreak);
+
+        Assert.AreEqual(TokenCategory.LineBreak, token.Category);
+    }
 }
