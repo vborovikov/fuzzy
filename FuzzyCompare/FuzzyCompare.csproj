@@ -5,17 +5,12 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <VersionPrefix>0.2.7</VersionPrefix>
-    <VersionSuffix>beta</VersionSuffix>
+    <Title>FuzzyCompare</Title>
+    <Description>Fuzzy string comparison library</Description>
   </PropertyGroup>
 
   <PropertyGroup>
     <PackageId>FuzzyCompare</PackageId>
-    <PackageVersion>$(Version)</PackageVersion>
-    <Authors>Vladislav Borovikov</Authors>
-    <Title>FuzzyCompare</Title>
-    <Description>Fuzzy string comparison library</Description>
-    <Copyright>Copyright © 2023 Vladislav Borovikov</Copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <PackageReadmeFile>README.md</PackageReadmeFile>
