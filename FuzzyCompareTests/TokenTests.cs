@@ -108,4 +108,18 @@ public class TokenTests
             Assert.IsFalse(token.Span.IsEmpty);
         }
     }
+
+    [TestMethod]
+    public void EnumerateTokens_TimeZone_WordNumber()
+    {
+        var iter = "UTC+12".EnumerateTokens();
+
+        Assert.IsTrue(iter.MoveNext());
+        Assert.AreEqual(TokenCategory.Word, iter.Current.Category);
+        
+        Assert.IsTrue(iter.MoveNext());
+        Assert.AreEqual(TokenCategory.Number, iter.Current.Category);
+
+        Assert.IsFalse(iter.MoveNext());
+    }
 }

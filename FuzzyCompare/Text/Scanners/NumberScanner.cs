@@ -39,7 +39,7 @@ namespace FuzzyCompare.Text.Scanners
         {
             //todo: detect integers, floating-point numbers (all notations), hex numbers
 
-            if (span[start] == '-')
+            if (span[start] == '-' || span[start] == '+')
                 ++start;
 
             var hex = false;
