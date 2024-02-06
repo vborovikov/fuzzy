@@ -77,7 +77,7 @@ public static class Tokenizer
         /// Returns the current instance of the <see cref="TokenRefEnumerator"/> object.
         /// </summary>
         /// <returns>The current instance of the <see cref="TokenRefEnumerator"/> object.</returns>
-        public TokenRefEnumerator GetEnumerator() => this;
+        public readonly TokenRefEnumerator GetEnumerator() => this;
 
         /// <summary>
         /// Advances the enumerator to the next token reference in the span.
@@ -121,13 +121,13 @@ public static class Tokenizer
         /// <summary>
         /// Gets the current token.
         /// </summary>
-        public Token Current => this.current;
+        public readonly Token Current => this.current;
 
         /// <summary>
         /// Returns the current instance of the <see cref="TokenEnumerator"/> object.
         /// </summary>
         /// <returns>The current instance of the <see cref="TokenEnumerator"/> object.</returns>
-        public TokenEnumerator GetEnumerator() => this;
+        public readonly TokenEnumerator GetEnumerator() => this;
 
         /// <summary>
         /// Advances the enumerator to the next token in the string.
@@ -149,16 +149,16 @@ public static class Tokenizer
             return true;
         }
 
-        object? IEnumerator.Current => this.current;
+        readonly object? IEnumerator.Current => this.current;
 
-        void IDisposable.Dispose()
+        readonly void IDisposable.Dispose()
         {
             // no-op
         }
 
-        IEnumerator IEnumerable.GetEnumerator() => this;
+        readonly IEnumerator IEnumerable.GetEnumerator() => this;
 
-        IEnumerator<Token> IEnumerable<Token>.GetEnumerator() => this;
+        readonly IEnumerator<Token> IEnumerable<Token>.GetEnumerator() => this;
 
         void IEnumerator.Reset()
         {
@@ -179,6 +179,15 @@ public static class Tokenizer
 #pragma warning restore CS0649
 
     /// <summary>
+    /// Tokenizes a string and returns an enumerator for iterating over token references.
+    /// </summary>
+    /// <param name="str">The string to tokenize.</param>
+    /// <param name="culture">The culture to use for string comparison.</param>
+    /// <returns>An enumerator for iterating over token references.</returns>
+    public static TokenRefEnumerator EnumerateTokens(this string str, CultureInfo? culture = null) =>
+        EnumerateTokens(str.AsSpan(), culture);
+
+    /// <summary>
     /// Tokenizes a span of characters and returns an enumerator for iterating over token references.
     /// </summary>
     /// <param name="span">The span of characters to tokenize.</param>
@@ -195,9 +204,18 @@ public static class Tokenizer
     /// <param name="str">The string to tokenize.</param>
     /// <param name="culture">The culture to use for string comparison.</param>
     /// <returns>An enumerator for iterating over tokens.</returns>
-    public static TokenEnumerator Tokenize(this string str, CultureInfo? culture = null)
+    public static TokenEnumerator Tokenize(this string str, CultureInfo? culture = null) =>
+        Tokenize(str.AsMemory(), culture);
+
+    /// <summary>
+    /// Tokenizes a memory region of characters and returns an enumerator for iterating over tokens.
+    /// </summary>
+    /// <param name="memory">The memory region of characters to tokenize.</param>
+    /// <param name="culture">The culture to use for string comparison.</param>
+    /// <returns>An enumerator for iterating over tokens.</returns>
+    public static TokenEnumerator Tokenize(this ReadOnlyMemory<char> memory, CultureInfo? culture = null)
     {
-        return new(str.AsMemory(), culture ?? CultureInfo.CurrentCulture);
+        return new(memory, culture ?? CultureInfo.CurrentCulture);
     }
 
     private static TokenCategory Test(ReadOnlySpan<char> span, int start, CultureInfo culture)

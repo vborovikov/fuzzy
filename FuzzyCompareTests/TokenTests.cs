@@ -99,4 +99,13 @@ public class TokenTests
 
         Assert.AreEqual(TokenCategory.LineBreak, token.Category);
     }
+
+    [TestMethod]
+    public void EnumerateTokens_PhoneNumber_Enumerated()
+    {
+        foreach (var token in "978-0-08-045362-0".EnumerateTokens())
+        {
+            Assert.IsFalse(token.Span.IsEmpty);
+        }
+    }
 }

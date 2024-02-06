@@ -9,10 +9,30 @@ namespace FuzzyCompare.Text.Scanners
 
         public bool Test(ReadOnlySpan<char> span, int start, CultureInfo culture)
         {
-            return
-                char.IsDigit(span[start]) ||
-                (span.Length > 1 && span[start] == '-' && char.IsDigit(span[start + 1]) &&
-                    (span[start + 1] != '0' || span.Length < 2 || (span[start + 2] != 'x' && span[start + 2] != 'X')));
+            if (char.IsDigit(span[start]))
+                return true;
+
+            if (span[start] == '-' || span[start] == '+')
+            {
+                ++start;
+                if (span.Length > start && char.IsDigit(span[start]))
+                {
+                    // check for hex number
+                    if (span[start] == '0')
+                    {
+                        ++start;
+                        if (span.Length > start && (span[start] == 'x' || span[start] == 'X'))
+                        {
+                            // not a number, treat the sign as a separate token
+                            return false;
+                        }
+                    }
+
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         public int Scan(ReadOnlySpan<char> span, int start, CultureInfo culture)
