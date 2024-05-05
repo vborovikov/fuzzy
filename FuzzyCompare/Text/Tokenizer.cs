@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections;
+using System.Diagnostics;
 using System.Globalization;
 using Scanners;
 
@@ -13,14 +14,15 @@ public static class Tokenizer
     /// <summary>
     /// Represents a reference to a token that was generated during tokenization.
     /// </summary>
-    public readonly ref struct TokenRef
+    [DebuggerDisplay("{Category,nq}: {Span}")]
+    public readonly ref struct SpanToken
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="TokenRef"/> structure with the specified span and category.
+        /// Initializes a new instance of the <see cref="SpanToken"/> structure with the specified span and category.
         /// </summary>
         /// <param name="span">The span of characters that the token represents.</param>
         /// <param name="category">The category of the token.</param>
-        public TokenRef(ReadOnlySpan<char> span, TokenCategory category)
+        public SpanToken(ReadOnlySpan<char> span, TokenCategory category)
         {
             this.Span = span;
             this.Category = category;
@@ -36,7 +38,7 @@ public static class Tokenizer
         public TokenCategory Category { get; }
 
         /// <summary>
-        /// Deconstructs the <see cref="TokenRef"/> instance into its constituent parts.
+        /// Deconstructs the <see cref="SpanToken"/> instance into its constituent parts.
         /// </summary>
         /// <param name="span">The span of characters that the token represents.</param>
         /// <param name="category">The category of the token.</param>
@@ -47,58 +49,55 @@ public static class Tokenizer
         }
 
         /// <summary>
-        /// Implicitly converts a <see cref="TokenRef"/> to a <see cref="ReadOnlySpan{T}"/> of <see cref="char"/>.
+        /// Implicitly converts a <see cref="SpanToken"/> to a <see cref="ReadOnlySpan{T}"/> of <see cref="char"/>.
         /// </summary>
         /// <param name="token">The token to convert.</param>
-        public static implicit operator ReadOnlySpan<char>(TokenRef token) => token.Span;
+        public static implicit operator ReadOnlySpan<char>(SpanToken token) => token.Span;
     }
 
     /// <summary>
     /// Provides an enumerator for iterating over token references in a span of characters.
     /// </summary>
-    public ref struct TokenRefEnumerator
+    public ref struct SpanTokenEnumerator
     {
         private ReadOnlySpan<char> span;
         private readonly CultureInfo culture;
+        private SpanToken current;
 
-        internal TokenRefEnumerator(ReadOnlySpan<char> span, CultureInfo culture)
+        internal SpanTokenEnumerator(ReadOnlySpan<char> span, CultureInfo culture)
         {
             this.span = span;
             this.culture = culture;
-            this.Current = default;
         }
 
         /// <summary>
         /// Gets the current token reference.
         /// </summary>
-        public TokenRef Current { get; private set; }
+        public readonly SpanToken Current => this.current;
 
         /// <summary>
-        /// Returns the current instance of the <see cref="TokenRefEnumerator"/> object.
+        /// Returns the current instance of the <see cref="SpanTokenEnumerator"/> object.
         /// </summary>
-        /// <returns>The current instance of the <see cref="TokenRefEnumerator"/> object.</returns>
-        public readonly TokenRefEnumerator GetEnumerator() => this;
+        /// <returns>The current instance of the <see cref="SpanTokenEnumerator"/> object.</returns>
+        public readonly SpanTokenEnumerator GetEnumerator() => this;
 
         /// <summary>
         /// Advances the enumerator to the next token reference in the span.
         /// </summary>
         public bool MoveNext()
         {
-            var text = this.span;
+            var remaining = this.span;
+            if (remaining.IsEmpty)
+                return false;
 
-            if (text.Length > 0)
-            {
-                var tokenCategory = Test(text, 0, this.culture);
-                var tokenEndIndex = Scan(tokenCategory, text, 0, this.culture);
-                if (tokenEndIndex < 0)
-                    tokenEndIndex = text.Length;
+            var tokenCategory = Test(remaining, 0, this.culture);
+            var tokenEndIndex = Scan(tokenCategory, remaining, 0, this.culture);
+            if (tokenEndIndex < 0)
+                tokenEndIndex = remaining.Length;
 
-                this.Current = new TokenRef(text.Slice(0, tokenEndIndex), tokenCategory);
-                this.span = text.Slice(tokenEndIndex);
-                return true;
-            }
-
-            return false;
+            this.current = new SpanToken(remaining[..tokenEndIndex], tokenCategory);
+            this.span = remaining[tokenEndIndex..];
+            return true;
         }
     }
 
@@ -184,7 +183,7 @@ public static class Tokenizer
     /// <param name="str">The string to tokenize.</param>
     /// <param name="culture">The culture to use for string comparison.</param>
     /// <returns>An enumerator for iterating over token references.</returns>
-    public static TokenRefEnumerator EnumerateTokens(this string str, CultureInfo? culture = null) =>
+    public static SpanTokenEnumerator EnumerateTokens(this string str, CultureInfo? culture = null) =>
         EnumerateTokens(str.AsSpan(), culture);
 
     /// <summary>
@@ -193,7 +192,7 @@ public static class Tokenizer
     /// <param name="span">The span of characters to tokenize.</param>
     /// <param name="culture">The culture to use for string comparison.</param>
     /// <returns>An enumerator for iterating over token references.</returns>
-    public static TokenRefEnumerator EnumerateTokens(this ReadOnlySpan<char> span, CultureInfo? culture = null)
+    public static SpanTokenEnumerator EnumerateTokens(this ReadOnlySpan<char> span, CultureInfo? culture = null)
     {
         return new(span, culture ?? CultureInfo.CurrentCulture);
     }
